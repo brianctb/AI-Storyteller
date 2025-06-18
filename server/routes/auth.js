@@ -128,11 +128,11 @@ router.put(
 
       // regenerate the cookie with the updated username
       findUserById(id, async (err, results) => {
-        if (err || results.length === 0) {
+        if (err || results.rows[0] === 0) {
           return res.status(400).json({ message: "User not found." });
         }
 
-        const user = results[0];
+        const user = results.rows[0];
         const token = generateToken(user);
 
         res.cookie("authToken", token, {

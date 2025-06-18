@@ -9,11 +9,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (response.status === 200) {
       const userData = await response.json();
-      console.log(userData);
       if (!userData.isAdmin) {
         window.location.href = "./user.html";
       } else {
-        displayUserTable(userData.users);
+        displayUserTable(userData.users.rows);
       }
     } else {
       window.location.href = "./login.html";
@@ -31,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (response.status === 200) {
       const resourceData = await response.json();
-      displayResourceTable(resourceData.resources);
+      displayResourceTable(resourceData.resources.rows);
     } else {
       console.error("Error fetching resource data");
     }
