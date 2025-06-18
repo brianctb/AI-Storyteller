@@ -8,6 +8,7 @@ const {
   updateUser,
   getAllResources,
   findUserById,
+  getApiCallCount,
 } = require("../db/queries");
 const {
   authenticate,
@@ -20,6 +21,7 @@ const {
   generateToken,
 } = require("../utils/helpers");
 const { ROUTES } = require("./route");
+const e = require("express");
 require("dotenv").config();
 
 /**
@@ -67,6 +69,7 @@ router.post(ROUTES.AUTH.REGISTER, incrementRequestCount, async (req, res) => {
 
   registerUser(username, email, hashedPassword, (err, result) => {
     if (err) {
+      console.log("Error registering user:", err);
       return res.status(500).json({ message: "User registration failed." });
     }
     res.status(201).json({ message: "User registered successfully." });
@@ -82,7 +85,7 @@ router.post(ROUTES.AUTH.LOGIN, incrementRequestCount, (req, res) => {
       return res.status(400).json({ message: "User not found." });
     }
 
-    const user = results[0];
+    const user = results.rows[0];
     const passwordMatch = await verifyPassword(password, user.password);
 
     if (!passwordMatch) {
@@ -128,7 +131,7 @@ router.put(
         if (err || results.length === 0) {
           return res.status(400).json({ message: "User not found." });
         }
-    
+
         const user = results[0];
         const token = generateToken(user);
 
@@ -197,7 +200,7 @@ router.get(
         isAdmin: req.user.isAdmin,
         apiCalls: req.user.apiCalls,
         id: req.user.id,
-        username: req.user.username
+        username: req.user.username,
       });
     } else {
       return res.status(401).json({ message: "Unauthorized" });
@@ -213,11 +216,11 @@ router.get(
   (req, res) => {
     if (req.user) {
       const userId = req.user.id;
-      findUserById(userId, (err, results) => {
+      getApiCallCount(userId, (err, results) => {
         if (err || results.length === 0) {
           return res.status(400).json({ message: "User not found." });
         }
-        res.json({ apiCalls: results[0].api_calls });
+        res.json({ apiCalls: results.api_calls });
       });
     } else {
       return res.status(401).json({ message: "Unauthorized" });

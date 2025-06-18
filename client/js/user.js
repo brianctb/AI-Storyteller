@@ -54,12 +54,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const plotTwist = document.getElementById("plotTwist").checked;
 
       const prompt = `
-        Write a ${tone.toLowerCase()} ${genre.toLowerCase()} story set in a ${setting.toLowerCase()}. The main character is ${characterName}, who plays the role of a ${role.toLowerCase()}. ${plotTwist ? "Add an unexpected plot twist." : ""}
+        Write a ${tone.toLowerCase()} ${genre.toLowerCase()} story set in a ${setting.toLowerCase()}. The main character is ${characterName}, who plays the role of a ${role.toLowerCase()}. ${
+        plotTwist ? "Add an unexpected plot twist." : ""
+      }
         Can you please return the story in this json format please: { "title": (string, title of the story), "paragraphs": (array of strings for each paragraph of the story) }
       `;
 
       try {
-
         showLoadingOverlay();
 
         const response = await fetch(`${APP_DOMAIN}/api/v1/generate`, {
