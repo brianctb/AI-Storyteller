@@ -84,8 +84,14 @@ router.post(ROUTES.AUTH.LOGIN, incrementRequestCount, (req, res) => {
     if (err || results.length === 0) {
       return res.status(400).json({ message: "User not found." });
     }
-
     const user = results.rows[0];
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Password or email is incorrect." });
+    }
+
     const passwordMatch = await verifyPassword(password, user.password);
 
     if (!passwordMatch) {
